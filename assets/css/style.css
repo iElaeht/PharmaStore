@@ -1,28 +1,24 @@
-:root {
-  --blue-pharma: #0056b3;
+/* Estilos específicos para el Dashboard */
+.stat-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    border: none;
 }
-body {
-  background-color: #f8f9fa;
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important;
 }
-.sidebar {
-  width: 250px;
-  height: 100vh;
-  position: fixed;
-  background-color: var(--blue-pharma);
-  color: white;
-  transition: all 0.3s;
+
+.icon-shape {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
 }
-.sidebar a {
-  color: white;
-  text-decoration: none;
-}
-.sidebar a:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-}
-.main-content {
-  margin-left: 250px;
-  padding: 20px;
-}
-.card-promo {
-  border-left: 5px solid var(--blue-pharma);
-}
+
+.bg-soft-blue { background-color: rgba(0, 97, 223, 0.1); color: var(--pharma-blue); }
+.bg-soft-success { background-color: rgba(25, 135, 84, 0.1); color: #198754; }
+.bg-soft-danger { background-color: rgba(220, 53, 69, 0.1); color: #dc3545; }

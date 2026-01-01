@@ -35,9 +35,8 @@ class Product extends Connection {
                     )";
             $consulta = $this->pdo->prepare($sql);
             return $consulta->execute($datos);
-        } catch (Exception $e) {
-            error_log("Error en registrar: " . $e->getMessage());
-            return false;
+        } catch (Exception $e) {;
+            return $e->getMessage();
         }
     }
 
