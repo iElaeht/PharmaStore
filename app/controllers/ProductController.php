@@ -1,50 +1,59 @@
 <?php
-// Importamos el modelo para poder usar sus funciones
-require_once '../models/Product.php';
+require_once "../models/Product.php";
+$product = new Product();
 
-// Verificamos si se ha enviado una acción por POST
-if (isset($_POST['action'])) {
-    $controller = new ProductController();
+header("Content-Type: application/json; charset=utf-8");
 
-    // Dependiendo de la acción, ejecutamos un método
-    if ($_POST['action'] === 'register') {
-        $controller->register();
-    }
-    
-    // Aquí puedes agregar más acciones como 'update' o 'delete' después
-}
+if (isset($_POST['operation'])) {
+    switch ($_POST['operation']) {
+        
+        case 'listar':
+            // Obtenemos todos los productos con status '1'
+            echo json_encode($product->listar());
+            break;
 
-class ProductController {
-    private $model;
+        case 'buscarId':
+            // Buscamos un producto específico para editarlo
+            echo json_encode($product->buscarId($_POST['id']));
+            break;
 
-    public function __construct() {
-        // Inicializamos el modelo de Producto
-        $this->model = new Products();
-    }
+        case 'registrar':
+            $datos = [
+                ':name'        => $_POST['name'],
+                ':category'    => $_POST['category'],
+                ':price'       => $_POST['price'],
+                ':stock'       => $_POST['stock'],
+                ':expiry_date' => $_POST['expiry_date']
+            ];
+            $resultado = $product->registrar($datos);
+            echo json_encode([
+                "status"  => $resultado,
+                "message" => $resultado ? "Producto registrado con éxito" : "Error al registrar"
+            ]);
+            break;
 
-    /**
-     * Procesa el registro de un producto
-     */
-    public function register() {
-        // 1. Recolectamos los datos del formulario (POST)
-        $name        = $_POST['name'];
-        $category    = $_POST['category'];
-        $price       = $_POST['price'];
-        $stock       = $_POST['stock'];
-        $expiry_date = $_POST['expiry_date'];
+        case 'actualizar':
+            $datos = [
+                ':id'          => $_POST['id'],
+                ':name'        => $_POST['name'],
+                ':category'    => $_POST['category'],
+                ':price'       => $_POST['price'],
+                ':stock'       => $_POST['stock'],
+                ':expiry_date' => $_POST['expiry_date']
+            ];
+            $resultado = $product->actualizar($datos);
+            echo json_encode([
+                "status"  => $resultado,
+                "message" => $resultado ? "Producto actualizado correctamente" : "No se pudo actualizar"
+            ]);
+            break;
 
-        // 2. Llamamos al método del modelo
-        // Nota: Asegúrate de que los nombres coincidan con tu archivo Product.php
-        $result = $this->model->register($name, $category, $price, $stock, $expiry_date);
-
-        // 3. Redireccionamos según el resultado
-        if ($result) {
-            // Éxito: volvemos al inventario con un mensaje
-            header("Location: ../inventory.php?status=success");
-        } else {
-            // Error: volvemos al registro con un aviso
-            header("Location: ../register.php?status=error");
-        }
-        exit();
+        case 'eliminar':
+            $resultado = $product->eliminar($_POST['id']);
+            echo json_encode([
+                "status"  => $resultado,
+                "message" => $resultado ? "Producto eliminado (desactivado)" : "Error al eliminar"
+            ]);
+            break;
     }
 }

@@ -1,5 +1,5 @@
 <?php
-class ConnectionDB{
+class Connection{
     private $server = "localhost";
     private $port = "3306"; //Aqui va el Port de DB (Por defecto casi siempre es 3306)
     private $database = "pharmastore";  //Aqui va el Nombre de DB

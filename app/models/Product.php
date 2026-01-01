@@ -1,90 +1,79 @@
 <?php
-require_once 'Connection.php'; // Asegúrate de que la ruta sea correcta
+require_once 'Connection.php';
 
-class Products {
-    private $db;
-    private $table = "products"; // Nombre de tu tabla en la BD
+class Product extends Connection {
+    private $pdo;
 
     public function __construct() {
-        $connection = new ConnectionDB();
-        $this->db = $connection->getConnection();
+        $this->pdo = parent::getConnection();
     }
 
-    /**
-     * CREATE: Registrar un nuevo producto
-     */
-    public function register($nombre, $categoria, $precio, $stock, $vencimiento) {
+    public function listar() {
         try {
-            $sql = "INSERT INTO {$this->table} (nombre, categoria, precio, stock, fecha_vencimiento) 
-                    VALUES (:nombre, :categoria, :precio, :stock, :vencimiento)";
-            
-            $stmt = $this->db->prepare($sql);
-            
-            // Vinculamos los parámetros para evitar Inyección SQL
-            $stmt->bindParam(':nombre', $nombre);
-            $stmt->bindParam(':categoria', $categoria);
-            $stmt->bindParam(':precio', $precio);
-            $stmt->bindParam(':stock', $stock);
-            $stmt->bindParam(':vencimiento', $vencimiento);
-
-            return $stmt->execute();
-        } catch (PDOException $e) {
-            error_log("Error en crear producto: " . $e->getMessage());
-            return false;
-        }
-    }
-
-    /**
-     * READ: Obtener todos los productos
-     */
-    public function listarTodos() {
-        try {
-            $sql = "SELECT * FROM {$this->table} ORDER BY id DESC";
-            $stmt = $this->db->query($sql);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
+            // Solo productos activos
+            $sql = "SELECT * FROM products WHERE status = '1' ORDER BY id DESC";
+            $consulta = $this->pdo->prepare($sql);
+            $consulta->execute();
+            return $consulta->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            error_log("Error en listar: " . $e->getMessage());
             return [];
         }
     }
 
-    /**
-     * UPDATE: Actualizar stock o datos (útil para inventario)
-     */
-    public function actualizar($id, $nombre, $categoria, $precio, $stock, $vencimiento) {
+    public function registrar($datos = []) {
         try {
-            $sql = "UPDATE {$this->table} SET 
-                    nombre = :nombre, 
-                    categoria = :categoria, 
-                    precio = :precio, 
-                    stock = :stock, 
-                    fecha_vencimiento = :vencimiento 
+            $sql = "INSERT INTO products (name, category, price, stock, expiry_date, status) 
+                    VALUES (:name, :category, :price, :stock, :expiry_date, '1')";
+            $consulta = $this->pdo->prepare($sql);
+            return $consulta->execute($datos);
+        } catch (Exception $e) {
+            error_log("Error en registrar: " . $e->getMessage());
+            return false;
+        }
+    }
+    public function actualizar($datos = []) {
+        try {
+            $sql = "UPDATE products SET 
+                        name = :name,
+                        category = :category,
+                        price = :price,
+                        stock = :stock,
+                        expiry_date = :expiry_date
                     WHERE id = :id";
             
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':id', $id);
-            $stmt->bindParam(':nombre', $nombre);
-            $stmt->bindParam(':categoria', $categoria);
-            $stmt->bindParam(':precio', $precio);
-            $stmt->bindParam(':stock', $stock);
-            $stmt->bindParam(':vencimiento', $vencimiento);
-
-            return $stmt->execute();
-        } catch (PDOException $e) {
+            $consulta = $this->pdo->prepare($sql);
+            
+            // Retorna true si se actualizó, false si hubo error
+            return $consulta->execute($datos);
+            
+        } catch (Exception $e) {
+            error_log('Error en actualizar producto: ' . $e->getMessage());
             return false;
         }
     }
 
-    /**
-     * DELETE: Eliminar un producto
-     */
     public function eliminar($id) {
         try {
-            $sql = "DELETE FROM {$this->table} WHERE id = :id";
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':id', $id);
-            return $stmt->execute();
-        } catch (PDOException $e) {
+            // Borrado lógico (status 0)
+            $sql = "UPDATE products SET status = '0' WHERE id = ?";
+            $consulta = $this->pdo->prepare($sql);
+            return $consulta->execute([$id]);
+        } catch (Exception $e) {
+            error_log('Error en eliminar: ' . $e->getMessage());
             return false;
+        }
+    }
+    public function buscarId($id) {
+        try {
+            // Buscamos en la tabla de productos
+            $sql = "SELECT * FROM products WHERE id = ?";
+            $consulta = $this->pdo->prepare($sql);
+            $consulta->execute([$id]);
+            return $consulta->fetch(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            error_log('Error en buscarId producto: ' . $e->getMessage());
+            return null;
         }
     }
 }
