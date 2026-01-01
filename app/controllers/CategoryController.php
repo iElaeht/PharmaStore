@@ -12,39 +12,37 @@ if (isset($_POST['operation'])) {
             break;
 
         case 'buscarId':
-            echo json_encode($category->buscarId($_POST['id']));
+            echo json_encode($category->buscarId($_POST['idCategoria']));
             break;
 
         case 'registrar':
             $datos = [
-                ':name'        => $_POST['name'],
-                ':description' => $_POST['description']
+                ':nombreCategoria' => $_POST['nombreCategoria']
             ];
             $resultado = $category->registrar($datos);
             echo json_encode([
                 "status"  => $resultado,
-                "message" => $resultado ? "Categoría creada correctamente" : "Error al crear categoría"
+                "message" => $resultado ? "Categoría guardada con éxito" : "Error al guardar categoría"
             ]);
             break;
 
         case 'actualizar':
             $datos = [
-                ':id'          => $_POST['id'],
-                ':name'        => $_POST['name'],
-                ':description' => $_POST['description']
+                ':idCategoria'     => $_POST['idCategoria'],
+                ':nombreCategoria' => $_POST['nombreCategoria']
             ];
             $resultado = $category->actualizar($datos);
             echo json_encode([
-                "status"  => $resultado,
+                "status"  => $resultado, 
                 "message" => $resultado ? "Categoría actualizada" : "Error al actualizar"
             ]);
             break;
 
         case 'eliminar':
-            $resultado = $category->eliminar($_POST['id']);
+            $resultado = $category->eliminar($_POST['idCategoria']);
             echo json_encode([
                 "status"  => $resultado,
-                "message" => $resultado ? "Categoría eliminada" : "Error al eliminar"
+                "message" => $resultado ? "Categoría desactivada" : "Error al eliminar"
             ]);
             break;
     }

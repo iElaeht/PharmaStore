@@ -10,8 +10,11 @@ class Product extends Connection {
 
     public function listar() {
         try {
-            // Solo productos activos
-            $sql = "SELECT * FROM products WHERE status = '1' ORDER BY id DESC";
+            // Hacemos un JOIN para traer el nombre de la categoría si lo necesitas
+            $sql = "SELECT p.*, c.nombreCategoria 
+                    FROM Products p
+                    INNER JOIN Categories c ON p.idCategoria = c.idCategoria
+                    WHERE p.estado = '1' ORDER BY p.idProducto DESC";
             $consulta = $this->pdo->prepare($sql);
             $consulta->execute();
             return $consulta->fetchAll(PDO::FETCH_ASSOC);
@@ -23,8 +26,13 @@ class Product extends Connection {
 
     public function registrar($datos = []) {
         try {
-            $sql = "INSERT INTO products (name, category, price, stock, expiry_date, status) 
-                    VALUES (:name, :category, :price, :stock, :expiry_date, '1')";
+            $sql = "INSERT INTO Products (
+                        idCategoria, nombreProducto, descripcion, precio, 
+                        stock, stockMinimo, fechaVencimiento, laboratorio
+                    ) VALUES (
+                        :idCategoria, :nombreProducto, :descripcion, :precio, 
+                        :stock, :stockMinimo, :fechaVencimiento, :laboratorio
+                    )";
             $consulta = $this->pdo->prepare($sql);
             return $consulta->execute($datos);
         } catch (Exception $e) {
@@ -32,47 +40,44 @@ class Product extends Connection {
             return false;
         }
     }
+
     public function actualizar($datos = []) {
         try {
-            $sql = "UPDATE products SET 
-                        name = :name,
-                        category = :category,
-                        price = :price,
+            $sql = "UPDATE Products SET 
+                        idCategoria = :idCategoria,
+                        nombreProducto = :nombreProducto,
+                        descripcion = :descripcion,
+                        precio = :precio,
                         stock = :stock,
-                        expiry_date = :expiry_date
-                    WHERE id = :id";
-            
+                        stockMinimo = :stockMinimo,
+                        fechaVencimiento = :fechaVencimiento,
+                        laboratorio = :laboratorio
+                    WHERE idProducto = :idProducto";
             $consulta = $this->pdo->prepare($sql);
-            
-            // Retorna true si se actualizó, false si hubo error
             return $consulta->execute($datos);
-            
         } catch (Exception $e) {
-            error_log('Error en actualizar producto: ' . $e->getMessage());
+            error_log('Error en actualizar: ' . $e->getMessage());
             return false;
         }
     }
 
-    public function eliminar($id) {
+    public function eliminar($idProducto) {
         try {
-            // Borrado lógico (status 0)
-            $sql = "UPDATE products SET status = '0' WHERE id = ?";
+            $sql = "UPDATE Products SET estado = '0' WHERE idProducto = ?";
             $consulta = $this->pdo->prepare($sql);
-            return $consulta->execute([$id]);
+            return $consulta->execute([$idProducto]);
         } catch (Exception $e) {
-            error_log('Error en eliminar: ' . $e->getMessage());
             return false;
         }
     }
-    public function buscarId($id) {
+
+    public function buscarId($idProducto) {
         try {
-            // Buscamos en la tabla de productos
-            $sql = "SELECT * FROM products WHERE id = ?";
+            $sql = "SELECT * FROM Products WHERE idProducto = ?";
             $consulta = $this->pdo->prepare($sql);
-            $consulta->execute([$id]);
+            $consulta->execute([$idProducto]);
             return $consulta->fetch(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
-            error_log('Error en buscarId producto: ' . $e->getMessage());
             return null;
         }
     }

@@ -8,51 +8,55 @@ if (isset($_POST['operation'])) {
     switch ($_POST['operation']) {
         
         case 'listar':
-            // Obtenemos todos los productos con status '1'
             echo json_encode($product->listar());
             break;
 
         case 'buscarId':
-            // Buscamos un producto específico para editarlo
-            echo json_encode($product->buscarId($_POST['id']));
+            echo json_encode($product->buscarId($_POST['idProducto']));
             break;
 
         case 'registrar':
             $datos = [
-                ':name'        => $_POST['name'],
-                ':category'    => $_POST['category'],
-                ':price'       => $_POST['price'],
-                ':stock'       => $_POST['stock'],
-                ':expiry_date' => $_POST['expiry_date']
+                ':idCategoria'      => $_POST['idCategoria'],
+                ':nombreProducto'   => $_POST['nombreProducto'],
+                ':descripcion'      => $_POST['descripcion'],
+                ':precio'           => $_POST['precio'],
+                ':stock'            => $_POST['stock'],
+                ':stockMinimo'      => $_POST['stockMinimo'],
+                ':fechaVencimiento' => $_POST['fechaVencimiento'],
+                ':laboratorio'      => $_POST['laboratorio']
             ];
             $resultado = $product->registrar($datos);
             echo json_encode([
                 "status"  => $resultado,
-                "message" => $resultado ? "Producto registrado con éxito" : "Error al registrar"
+                "message" => $resultado ? "Guardado" : "Error"
             ]);
             break;
 
         case 'actualizar':
             $datos = [
-                ':id'          => $_POST['id'],
-                ':name'        => $_POST['name'],
-                ':category'    => $_POST['category'],
-                ':price'       => $_POST['price'],
-                ':stock'       => $_POST['stock'],
-                ':expiry_date' => $_POST['expiry_date']
+                ':idProducto'       => $_POST['idProducto'],
+                ':idCategoria'      => $_POST['idCategoria'],
+                ':nombreProducto'   => $_POST['nombreProducto'],
+                ':descripcion'      => $_POST['descripcion'],
+                ':precio'           => $_POST['precio'],
+                ':stock'            => $_POST['stock'],
+                ':stockMinimo'      => $_POST['stockMinimo'],
+                ':fechaVencimiento' => $_POST['fechaVencimiento'],
+                ':laboratorio'      => $_POST['laboratorio']
             ];
             $resultado = $product->actualizar($datos);
             echo json_encode([
                 "status"  => $resultado,
-                "message" => $resultado ? "Producto actualizado correctamente" : "No se pudo actualizar"
+                "message" => $resultado ? "Actualizado" : "Error"
             ]);
             break;
 
         case 'eliminar':
-            $resultado = $product->eliminar($_POST['id']);
+            $resultado = $product->eliminar($_POST['idProducto']);
             echo json_encode([
                 "status"  => $resultado,
-                "message" => $resultado ? "Producto eliminado (desactivado)" : "Error al eliminar"
+                "message" => $resultado ? "Eliminado" : "Error"
             ]);
             break;
     }

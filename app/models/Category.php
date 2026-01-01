@@ -1,5 +1,5 @@
 <?php
-require_once 'Connection.php';
+require_once 'ConnectionDB.php';
 
 class Category extends Connection {
     private $pdo;
@@ -10,7 +10,8 @@ class Category extends Connection {
 
     public function listar() {
         try {
-            $sql = "SELECT * FROM categories WHERE status = '1' ORDER BY name ASC";
+            // Listamos categorías activas (estado = '1')
+            $sql = "SELECT * FROM Categories WHERE estado = '1' ORDER BY nombreCategoria ASC";
             $consulta = $this->pdo->prepare($sql);
             $consulta->execute();
             return $consulta->fetchAll(PDO::FETCH_ASSOC);
@@ -22,8 +23,7 @@ class Category extends Connection {
 
     public function registrar($datos = []) {
         try {
-            $sql = "INSERT INTO categories (name, description, status) 
-                    VALUES (:name, :description, '1')";
+            $sql = "INSERT INTO Categories (nombreCategoria) VALUES (:nombreCategoria)";
             $consulta = $this->pdo->prepare($sql);
             return $consulta->execute($datos);
         } catch (Exception $e) {
@@ -31,15 +31,12 @@ class Category extends Connection {
             return false;
         }
     }
-    // ... (listar y registrar ya los tienes)
 
     public function actualizar($datos = []) {
         try {
-            $sql = "UPDATE categories SET 
-                        name = :name, 
-                        description = :description 
-                    WHERE id = :id";
-            
+            $sql = "UPDATE Categories SET 
+                        nombreCategoria = :nombreCategoria
+                    WHERE idCategoria = :idCategoria";
             $consulta = $this->pdo->prepare($sql);
             return $consulta->execute($datos);
         } catch (Exception $e) {
@@ -48,27 +45,25 @@ class Category extends Connection {
         }
     }
 
-    public function eliminar($id) {
+    public function eliminar($idCategoria) {
         try {
-            // Aplicamos borrado lógico (estado = '0')
-            $sql = "UPDATE categories SET status = '0' WHERE id = ?";
+            // Borrado lógico para no afectar productos ya registrados
+            $sql = "UPDATE Categories SET estado = '0' WHERE idCategoria = ?";
             $consulta = $this->pdo->prepare($sql);
-            $consulta->execute([$id]);
-            return $consulta->rowCount() > 0;
+            return $consulta->execute([$idCategoria]);
         } catch (Exception $e) {
             error_log('Error en eliminar categoría: ' . $e->getMessage());
             return false;
         }
     }
 
-    public function buscarId($id) {
+    public function buscarId($idCategoria) {
         try {
-            $sql = "SELECT * FROM categories WHERE id = ?";
+            $sql = "SELECT * FROM Categories WHERE idCategoria = ?";
             $consulta = $this->pdo->prepare($sql);
-            $consulta->execute([$id]);
+            $consulta->execute([$idCategoria]);
             return $consulta->fetch(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
-            error_log('Error en buscarId categoría: ' . $e->getMessage());
             return null;
         }
     }
