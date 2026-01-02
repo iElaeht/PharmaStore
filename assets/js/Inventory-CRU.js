@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 .then(data => {
                     if (data.status) {
                         Swal.fire('¡Éxito!', 'Operación completada.', 'success')
-                            .then(() => window.location.href = "./inventory.php");
+                            .then(() => window.location.href = "./Products.php");
                     } else {
                         Swal.fire('Error', data.message || 'Error en la solicitud', 'error');
                     }
