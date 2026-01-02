@@ -22,7 +22,6 @@ CREATE TABLE Products (
     stockMinimo INT DEFAULT 5, -- Para alertas de reabastecimiento
     fechaVencimiento DATE NOT NULL,
     laboratorio VARCHAR(100),
-    imagen VARCHAR(255) DEFAULT 'default_product.png',
     estado CHAR(1) DEFAULT '1',
     fechaRegistro DATETIME DEFAULT NOW(),
     FOREIGN KEY (idCategoria) REFERENCES Categories(idCategoria)

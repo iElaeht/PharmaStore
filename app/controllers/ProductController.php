@@ -10,11 +10,9 @@ if (isset($_POST['operation'])) {
         case 'listar':
             echo json_encode($product->listar());
             break;
-
         case 'buscarId':
             echo json_encode($product->buscarId($_POST['idProducto']));
             break;
-
         case 'registrar':
             $datos = [
                 ':idCategoria'      => $_POST['idCategoria'],
