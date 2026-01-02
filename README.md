@@ -25,26 +25,26 @@ Sigue estos pasos para instalar y ejecutar el proyecto en tu máquina
 
 ### 1. Clona el repositorio
 
-* git clone https://github.com/tu-usuario/pharma-store.git
+* git clone https://github.com/tu-usuario/pharma-store.git
 
 ### 2. Configura la Base de Datos
 
-* Abre tu gestor de base de datos (phpMyAdmin o MySQL Workbench).
+* Abre tu gestor de base de datos (phpMyAdmin o MySQL Workbench).
 
-* Crea una base de datos llamada PharmaStore.
+* Crea una base de datos llamada PharmaStore.
 
-* Importa el archivo SQL ubicado en la carpeta del proyecto: app/database/PharmaStore.sql
+* Importa el archivo SQL ubicado en la carpeta del proyecto: app/database/PharmaStore.sql
 
 ### 3. Ajusta la conexión en PHP
 
-* Edita el archivo app/models/Conexion.php con las credenciales de tu servidor local:
+* Edita el archivo app/models/Conexion.php con las credenciales de tu servidor local:
 
-* private $user = "root";
-* private $pass = "root"; // Contraseña configurada
+* private $user = "root";
+* private $pass = "root"; // Contraseña configurada
 
 ### 4. Servidor Local
 
-* Copia la carpeta del proyecto en tu directorio de servidor (htdocs o www) y accede desde: http://localhost/pharmastore/
+* Copia la carpeta del proyecto en tu directorio de servidor (htdocs o www) y accede desde: http://localhost/pharmastore/
 
 ---
 
